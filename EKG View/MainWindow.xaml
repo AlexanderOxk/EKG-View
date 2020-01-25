@@ -11,17 +11,24 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
-        <d3:Chart x:Name="chart" BottomTitle="Argument" LeftTitle="Function" Grid.Column="1" Grid.Row="1">
+        <d3:Chart x:Name="chart" BottomTitle="Time" LeftTitle="Amplitude" Grid.Column="1" Grid.Row="1" Grid.RowSpan="5">
             <d3:LineGraph x:Name="linegraph" Stroke="Blue" StrokeThickness="2"/>
         </d3:Chart>
+
+        <CheckBox x:Name="cb_Invert" Grid.Row="1" Grid.Column="2" Margin="5 5 5 5" Content="Invert Y" />
 
     </Grid>
 </Window>

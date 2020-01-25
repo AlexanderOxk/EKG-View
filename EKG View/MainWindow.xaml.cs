@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using InteractiveDataDisplay.WPF;
+using NAudio.Wave;
+using NAudio.CoreAudioApi;
 
 namespace EKG_View
 {

@@ -26,19 +26,11 @@ namespace EKG_View
         {
             InitializeComponent();
 
-            double[] x = new double[200];
-            for (int i = 0; i < x.Length; i++)
-                x[i] = 3.1415 * i / (x.Length - 1);
-
-            for (int i = 0; i < 25; i++)
-            {
-                var lg = new LineGraph();
-                lines.Children.Add(lg);
-                lg.Stroke = new SolidColorBrush(Color.FromArgb(255, 0, (byte)(i * 10), 0));
-                lg.Description = String.Format("Data series {0}", i + 1);
-                lg.StrokeThickness = 2;
-                lg.Plot(x, x.Select(v => Math.Sin(v + i / 10.0)).ToArray());
-            }
+            var x = Enumerable.Range(0, 1001).Select(i => i / 10.0).ToArray();
+            var y = x.Select(v => Math.Abs(v) < 1e-10 ? 1 : Math.Sin(v) / v).ToArray();
+            linegraph.Plot(x, y);
+            chart.LegendVisibility = Visibility.Hidden;
+            
         }
     }
 }

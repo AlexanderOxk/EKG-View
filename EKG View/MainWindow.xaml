@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:EKG_View"
         xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
         mc:Ignorable="d"
-        Title="EKG View" Height="450" Width="800">
+        Title="EKG View" Height="450" Width="800" Closing="Window_Closing">
     <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
@@ -29,6 +29,9 @@
         </d3:Chart>
 
         <CheckBox x:Name="cb_Invert" Grid.Row="1" Grid.Column="2" Margin="5 5 5 5" Content="Invert Y" />
+        <Button x:Name="btn_start" Grid.Row="2" Grid.Column="2" Margin="5 5 5 5" Content="Start Aqusition" Click="btn_start_Click" />
+        <Button x:Name="btn_stop" Grid.Row="3" Grid.Column="2" Margin="5 5 5 5" Content="Stop Aqusition" Click="btn_stop_Click" />
+        <Button x:Name="btn_clr" Grid.Row="4" Grid.Column="2" Margin="5 5 5 5" Content="Clear" Click="btn_clr_Click" />
 
     </Grid>
 </Window>

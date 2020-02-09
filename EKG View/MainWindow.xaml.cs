@@ -1,33 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using InteractiveDataDisplay.WPF;
 using NAudio.Wave;
-using NAudio.CoreAudioApi;
 using System.Timers;
 
 namespace EKG_View
 {
     public partial class MainWindow : Window
     {
-        private int maxDataPoints = 250;
+        private int maxDataPoints = 1024;
         private float t = 0;
         public Timer GraphDataTimer;
         WaveInEvent waveIn = new WaveInEvent();
-        private Tuple<LinkedList<float>, LinkedList<float>> data = 
-            new Tuple<LinkedList<float>, LinkedList<float>>(new LinkedList<float>(), new LinkedList<float>());
+        private LinkedList<float> data = new LinkedList<float>();
         private bool recording = false;
         private bool invert = false;
 
@@ -35,9 +22,9 @@ namespace EKG_View
         {
             InitializeComponent();
 
-            GraphDataTimer = new Timer(32);
+            GraphDataTimer = new Timer(50);
             GraphDataTimer.Start();
-            waveIn.WaveFormat = new WaveFormat(50, 16, 1);
+            waveIn.WaveFormat = new WaveFormat(8192, 16, 1);                                          
             GraphDataTimer.Elapsed += GraphDataTimer_Elapsed;
             waveIn.DataAvailable += OnDataAvailable;
 
@@ -61,14 +48,12 @@ namespace EKG_View
                         sample32 = -sample32;
                     }
 
-                    data.Item1.AddLast(t); t += 1.0f / (float)waveIn.WaveFormat.AverageBytesPerSecond;
-                    data.Item2.AddLast(sample);
+                    data.AddLast(sample);
                 }
 
-                while (data.Item1.Count > maxDataPoints)
+                while (data.Count > maxDataPoints)
                 {
-                    data.Item1.RemoveFirst();
-                    data.Item2.RemoveFirst();
+                    data.RemoveFirst();
                 }
             }
         }
@@ -79,7 +64,7 @@ namespace EKG_View
             {
                 Dispatcher.Invoke(() =>
                 {
-                    linegraph.Plot(data.Item1, data.Item2);
+                    linegraph.PlotY(data);
                 });
             }
         }
@@ -92,21 +77,29 @@ namespace EKG_View
         {
             if (!recording)
             {
-                waveIn.StartRecording();
-                linegraph.IsAutoFitEnabled = true;
-                recording = true;
+                try
+                {
+                    waveIn.StartRecording();
+                    linegraph.IsAutoFitEnabled = true;
+                    recording = true;
+                } 
+                catch
+                {
+                    MessageBox.Show("No sensor detected. Make sure EKG is connected.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
         private void btn_clr_Click(object sender, RoutedEventArgs e)
         {
             lock (data)
             {
-                while (data.Item1.Count != 0)
+                while (data.Count != 0)
                 {
-                    data.Item1.RemoveFirst();
-                    data.Item2.RemoveFirst();
+                    data.RemoveFirst();
                 }
             }
+
+            t = 0;
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -122,6 +115,11 @@ namespace EKG_View
         private void slider_samples_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             maxDataPoints = (int)slider_samples.Value;
+        }
+
+        private void btn_input_device_Click(object sender, RoutedEventArgs e)
+        {
+            //waveIn.DeviceNumber = 1;
         }
     }
 }
